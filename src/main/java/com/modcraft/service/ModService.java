@@ -39,6 +39,7 @@ public class ModService {
     }
 
     public Mod createMod(Mod mod) {
+        mod.setId(null);
         return modRepository.save(mod);
     }
 

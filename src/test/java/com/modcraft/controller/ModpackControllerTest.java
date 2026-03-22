@@ -1,6 +1,7 @@
 package com.modcraft.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modcraft.dto.ModpackRequest;
 import com.modcraft.model.Mod;
 import com.modcraft.model.Modpack;
 import com.modcraft.service.ModpackBuilderService;
@@ -75,17 +76,17 @@ class ModpackControllerTest {
 
     @Test
     void createModpack_returns201() throws Exception {
-        Modpack modpack = new Modpack("New Pack", "desc", "1.20.1");
+        ModpackRequest request = new ModpackRequest("New Pack", "desc", "1.20.1");
         mockMvc.perform(post("/api/modpacks")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(modpack)))
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.name", is("New Pack")));
     }
 
     @Test
     void createModpack_returns400WhenInvalid() throws Exception {
-        Modpack invalid = new Modpack("", "", "");
+        ModpackRequest invalid = new ModpackRequest("", "", "");
         mockMvc.perform(post("/api/modpacks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalid)))
@@ -94,7 +95,7 @@ class ModpackControllerTest {
 
     @Test
     void updateModpack_returns200() throws Exception {
-        Modpack update = new Modpack("Updated Pack", "new desc", "1.20.2");
+        ModpackRequest update = new ModpackRequest("Updated Pack", "new desc", "1.20.2");
         mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(update)))
@@ -141,3 +142,4 @@ class ModpackControllerTest {
             .andExpect(jsonPath("$.mods", hasSize(1)));
     }
 }
+

@@ -1,5 +1,6 @@
 package com.modcraft.controller;
 
+import com.modcraft.dto.ModpackRequest;
 import com.modcraft.model.Modpack;
 import com.modcraft.service.ModpackBuilderService;
 import jakarta.validation.Valid;
@@ -45,13 +46,15 @@ public class ModpackController {
     }
 
     @PostMapping
-    public ResponseEntity<Modpack> createModpack(@Valid @RequestBody Modpack modpack) {
+    public ResponseEntity<Modpack> createModpack(@Valid @RequestBody ModpackRequest request) {
+        Modpack modpack = new Modpack(request.getName(), request.getDescription(), request.getMinecraftVersion());
         Modpack created = modpackBuilderService.createModpack(modpack);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Modpack> updateModpack(@PathVariable Long id, @Valid @RequestBody Modpack modpack) {
+    public ResponseEntity<Modpack> updateModpack(@PathVariable Long id, @Valid @RequestBody ModpackRequest request) {
+        Modpack modpack = new Modpack(request.getName(), request.getDescription(), request.getMinecraftVersion());
         return ResponseEntity.ok(modpackBuilderService.updateModpack(id, modpack));
     }
 
@@ -80,3 +83,4 @@ public class ModpackController {
         return ResponseEntity.ok(modpackBuilderService.buildModpack(id));
     }
 }
+

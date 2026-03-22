@@ -43,6 +43,8 @@ public class ModpackBuilderService {
     }
 
     public Modpack createModpack(Modpack modpack) {
+        modpack.setId(null);
+        modpack.getMods().clear();
         return modpackRepository.save(modpack);
     }
 
@@ -76,10 +78,11 @@ public class ModpackBuilderService {
 
     public Modpack removeModFromModpack(Long modpackId, Long modId) {
         Modpack modpack = getModpackById(modpackId);
-        modService.getModById(modId);
 
         boolean removed = modpack.getMods().removeIf(m -> m.getId().equals(modId));
         if (!removed) {
+            // Verify the mod exists (throws ResourceNotFoundException if not), then report it is not in the pack
+            modService.getModById(modId);
             throw new ResourceNotFoundException(
                 "Mod with id " + modId + " is not in modpack with id " + modpackId);
         }

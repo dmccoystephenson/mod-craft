@@ -2,7 +2,6 @@ package com.modcraft.service;
 
 import com.modcraft.exception.ResourceNotFoundException;
 import com.modcraft.model.Mod;
-import com.modcraft.repository.ModRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ class ModServiceTest {
 
     @Autowired
     private ModService modService;
-
-    @Autowired
-    private ModRepository modRepository;
 
     private Mod testMod;
 

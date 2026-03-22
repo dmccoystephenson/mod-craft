@@ -4,8 +4,6 @@ import com.modcraft.exception.ModAlreadyInModpackException;
 import com.modcraft.exception.ResourceNotFoundException;
 import com.modcraft.model.Mod;
 import com.modcraft.model.Modpack;
-import com.modcraft.repository.ModRepository;
-import com.modcraft.repository.ModpackRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +22,6 @@ class ModpackBuilderServiceTest {
 
     @Autowired
     private ModService modService;
-
-    @Autowired
-    private ModRepository modRepository;
-
-    @Autowired
-    private ModpackRepository modpackRepository;
 
     private Mod testMod;
     private Modpack testModpack;
