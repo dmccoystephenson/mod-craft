@@ -74,6 +74,18 @@ If you see `BUILD SUCCESS`, the tests have passed.
    ```
 3. The H2 in-memory database is reset on each restart. To use the H2 console, activate the `dev` profile (see [Configuration Guide](CONFIG.md)).
 
+## Usage reporting
+
+Usage reporting is on by default: when the service starts it sends one `startup` event, carrying its name (`mod-craft`), its version and the tag `service=true`, to the maintainers' [trace](https://github.com/Stephenson-Software/trace) service at `https://trace.danielstephenson.dev`, so that it is known whether anybody runs it. Nothing is sent per request, and nothing about mods, modpacks, users, hosts or IP addresses is ever included. The event goes out on a background thread and is dropped if the trace server is down or slow, so it can never delay start-up or a request. One line is logged at start-up saying whether reporting is on and, if it is off, which switch turned it off.
+
+To turn it off, any one of these is enough:
+
+- `USAGE_REPORTING_ENABLED=false` in the environment (or `--usage-reporting.enabled=false` on the command line, or `usage-reporting.enabled=false` in `application.properties`)
+- `TRACE_USAGE_REPORTING=off` (also `false`, `0`, `no`) in the environment — the switch every trace client honours, checked before the service's own setting
+- `DO_NOT_TRACK=1` (also `true`, `yes`) in the environment, per [consoledonottrack.com](https://consoledonottrack.com)
+
+The bundled `usage-reporting.key` is the write key issued to mod-craft; it can only add usage events and is not secret. See [`usage-reporting.enabled`](CONFIG.md#usage-reportingenabled) in the Configuration Guide, and for what trace collects and why: https://github.com/Stephenson-Software/trace#usage-reporting
+
 ## Authors and Acknowledgement
 
 ### Developers
