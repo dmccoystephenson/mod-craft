@@ -98,10 +98,37 @@ spring.h2.console.enabled=true
 
 ---
 
+## usage-reporting.enabled
+
+**Type:** boolean  
+**Default:** `true`  
+**Environment variable:** `USAGE_REPORTING_ENABLED`  
+**Description:** Whether the service sends one `startup` event (program name, version and the tag `service=true`) to the trace usage-tracking service when it starts. Nothing is sent per request, and nothing about mods, modpacks, users or hosts. `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1` in the environment also turn it off and win over this setting. See [Usage reporting](README.md#usage-reporting).
+
+---
+
+## usage-reporting.endpoint
+
+**Type:** string  
+**Default:** `https://trace.danielstephenson.dev`  
+**Environment variable:** `USAGE_REPORTING_ENDPOINT`  
+**Description:** The trace service the startup event is sent to.
+
+---
+
+## usage-reporting.key
+
+**Type:** string  
+**Default:** the write key issued to mod-craft  
+**Environment variable:** `USAGE_REPORTING_KEY`  
+**Description:** The trace write key. It can only add usage events and is not secret. A blank key turns reporting off.
+
+---
+
 ## Profiles
 
 | Profile | Purpose |
 |---------|---------|
 | *(default)* | Safe defaults for production-like environments (`ddl-auto=validate`, H2 console disabled). |
 | `dev` | Local development: `ddl-auto=create-drop`, H2 console enabled. Activate with `--spring.profiles.active=dev`. |
-| *(test)* | Applied automatically during `mvn test`: `ddl-auto=create-drop` via `src/test/resources/application.properties`. |
+| *(test)* | Applied automatically during `mvn test`: `ddl-auto=create-drop` and `usage-reporting.enabled=false` via `src/test/resources/application.properties`. |
