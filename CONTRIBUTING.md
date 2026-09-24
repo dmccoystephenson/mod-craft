@@ -59,14 +59,8 @@ Issues are grouped into [milestones](https://github.com/dmccoystephenson/mod-cra
 
 Run the unit tests with:
 
-Linux:
 ```
-./mvnw clean test
-```
-
-Windows:
-```
-mvnw.cmd clean test
+mvn clean test
 ```
 
 ## Questions
