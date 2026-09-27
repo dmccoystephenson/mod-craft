@@ -125,6 +125,14 @@ spring.h2.console.enabled=true
 
 ---
 
+## usage-reporting.version
+
+**Type:** string  
+**Default:** `@project.version@`, replaced with the Maven project version at build time  
+**Description:** The version sent as the `version` tag on the startup event. If this is blank or still holds the unreplaced placeholder, the `Implementation-Version` from the jar manifest is used instead; if that is missing too, the event is sent without a `version` tag.
+
+---
+
 ## Profiles
 
 | Profile | Purpose |

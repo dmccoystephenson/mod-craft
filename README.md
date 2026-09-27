@@ -49,16 +49,8 @@ Please fill out a bug report [here](https://github.com/dmccoystephenson/mod-craf
 
 ### Unit Tests
 
-Linux:
-
 ```
-./mvnw clean test
-```
-
-Windows:
-
-```
-mvnw.cmd clean test
+mvn clean test
 ```
 
 If you see `BUILD SUCCESS`, the tests have passed.
@@ -70,7 +62,7 @@ If you see `BUILD SUCCESS`, the tests have passed.
 1. Clone the repository and open it in your IDE.
 2. Run the application using the Spring Boot Maven plugin:
    ```
-   ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+   mvn spring-boot:run -Dspring-boot.run.profiles=dev
    ```
 3. The H2 in-memory database is reset on each restart. To use the H2 console, activate the `dev` profile (see [Configuration Guide](CONFIG.md)).
 
