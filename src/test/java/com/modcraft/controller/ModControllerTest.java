@@ -83,6 +83,16 @@ class ModControllerTest {
     }
 
     @Test
+    void createMod_returns201WithoutAuthor() throws Exception {
+        Mod mod = new Mod("Sodium", "0.5.3", null, null, null, "1.20.1");
+        mockMvc.perform(post("/api/mods")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mod)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.author").doesNotExist());
+    }
+
+    @Test
     void createMod_returns400WhenInvalid() throws Exception {
         Mod invalid = new Mod("", "", null, null, null, "");
         mockMvc.perform(post("/api/mods")
