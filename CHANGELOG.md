@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Usage reporting: one `startup` event (name, version, `service=true`) is sent to the trace service on start-up; off with `USAGE_REPORTING_ENABLED=false`, `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
 
+### Fixed
+
+- `COMMANDS.md` now lists `author` as optional on `POST`/`PUT /api/mods` (it was never validated), documents the `400` validation error on mod and modpack create/update, and shows the JSON shape of `400`/`404`/`409` error responses.
+
 ## [0.0.1] – 2026-03-22
 
 ### Added

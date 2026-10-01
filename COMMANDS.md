@@ -2,6 +2,25 @@
 
 All endpoints are relative to `http://localhost:8080`.
 
+## Error Responses
+
+`404` and `409` responses have a JSON body with a single `error` field:
+
+```json
+{
+  "error": "Mod not found with id: 42"
+}
+```
+
+`400` responses (validation failures) have a JSON body with one entry per invalid field, mapping the field name to its message:
+
+```json
+{
+  "name": "must not be blank",
+  "minecraftVersion": "must not be blank"
+}
+```
+
 ---
 
 ## Mod Endpoints
@@ -42,10 +61,12 @@ GET /api/mods/3
 |-------|------|----------|-------------|
 | `name` | string | yes | Mod name |
 | `version` | string | yes | Mod version |
-| `author` | string | yes | Author name |
+| `author` | string | no | Author name |
 | `description` | string | no | Short description |
 | `fileUrl` | string | no | Download URL for the mod JAR |
 | `minecraftVersion` | string | yes | Target Minecraft version |
+
+**Errors:** `400` if a required field is missing or blank.
 
 **Example:**
 ```json
@@ -66,7 +87,9 @@ GET /api/mods/3
 **Description:** Updates all fields of an existing mod.  
 **Path parameter:** `id` – mod ID  
 **Request body:** Same fields as `POST /api/mods`.  
-**Errors:** `404` if the mod does not exist.
+**Errors:**
+- `400` if a required field is missing or blank.
+- `404` if the mod does not exist.
 
 ---
 
@@ -104,6 +127,8 @@ GET /api/mods/3
 | `description` | string | no | Short description |
 | `minecraftVersion` | string | yes | Target Minecraft version |
 
+**Errors:** `400` if a required field is missing or blank.
+
 **Example:**
 ```json
 {
@@ -120,7 +145,9 @@ GET /api/mods/3
 **Description:** Updates the name, description, and Minecraft version of a modpack.  
 **Path parameter:** `id` – modpack ID  
 **Request body:** Same fields as `POST /api/modpacks`.  
-**Errors:** `404` if the modpack does not exist.
+**Errors:**
+- `400` if a required field is missing or blank.
+- `404` if the modpack does not exist.
 
 ---
 
