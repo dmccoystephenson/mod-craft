@@ -297,6 +297,7 @@ class TraceClientTest {
         client.report("startup");
         client.close();
 
+        assertEquals(1, bodies.size());
         assertEquals("{\"application\":\"mod-craft\",\"name\":\"startup\","
                 + "\"tags\":{\"version\":\"1.2.3\",\"ci\":\"true\"}}", bodies.get(0));
     }
