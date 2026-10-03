@@ -270,7 +270,9 @@ class TraceClientTest {
         TraceClient client = builder().serverWideConfig(plugins.toFile()).build();
 
         Path file = plugins.resolve("trace").resolve("config.yml");
-        assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT, Files.readString(file));
+        // An enabled client appends its random server-id below the created content (client 0.5.0+).
+        assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT + "server-id: " + client.installId() + "\n",
+                Files.readString(file));
         assertTrue(client.isEnabled());
         client.close();
     }
@@ -299,7 +301,8 @@ class TraceClientTest {
 
         assertEquals(1, bodies.size());
         assertEquals("{\"application\":\"mod-craft\",\"name\":\"startup\","
-                + "\"tags\":{\"version\":\"1.2.3\",\"ci\":\"true\"}}", bodies.get(0));
+                + "\"tags\":{\"version\":\"1.2.3\",\"install\":\"" + client.installId() + "\",\"ci\":\"true\"}}",
+                bodies.get(0));
     }
 
     @Test
