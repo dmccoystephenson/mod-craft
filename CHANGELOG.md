@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- The usage-reporting "Details" link (startup notice, docs and config comments) now points at https://danielstephenson.dev/usage-reporting, a public page, instead of a link into a private repository that answered 404. The vendored `TraceClient` is trace-client-java 0.6.1, whose server-wide switch file comment carries the same link.
 - `COMMANDS.md` now lists `author` as optional on `POST`/`PUT /api/mods` (it was never validated), documents the `400` validation error on mod and modpack create/update, and shows the JSON shape of `400`/`404`/`409` error responses.
 
 ## [0.0.1] – 2026-03-22
