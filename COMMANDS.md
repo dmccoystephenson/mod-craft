@@ -32,6 +32,8 @@ All endpoints are relative to `http://localhost:8080`.
 - `minecraftVersion` – filter by exact Minecraft version (e.g. `?minecraftVersion=1.20.1`)
 - `search` – filter by partial name match, case-insensitive (e.g. `?search=opti`)
 
+The filters do not combine: if both are given, `minecraftVersion` is applied and `search` is ignored.
+
 **Example:**
 ```
 GET /api/mods?minecraftVersion=1.20.1
