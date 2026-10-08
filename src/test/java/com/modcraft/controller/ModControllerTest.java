@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -57,6 +58,24 @@ class ModControllerTest {
         mockMvc.perform(get("/api/mods").param("minecraftVersion", "1.20.1"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    void getAllMods_searchByPartialName() throws Exception {
+        modService.createMod(new Mod("OptiFine", "1.0", "author", "desc", "url", "1.20.1"));
+        mockMvc.perform(get("/api/mods").param("search", "journey"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("JourneyMap")));
+    }
+
+    @Test
+    void getAllMods_minecraftVersionTakesPrecedenceOverSearch() throws Exception {
+        modService.createMod(new Mod("OldMod", "1.0", "author", "desc", "url", "1.19.4"));
+        mockMvc.perform(get("/api/mods").param("minecraftVersion", "1.20.1").param("search", "old"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("JourneyMap")));
     }
 
     @Test
@@ -112,8 +131,33 @@ class ModControllerTest {
     }
 
     @Test
+    void updateMod_returns400WhenInvalid() throws Exception {
+        Mod invalid = new Mod("", "6.0.0", null, null, null, "1.20.2");
+        mockMvc.perform(put("/api/mods/{id}", savedMod.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest());
+        assertThat(modService.getModById(savedMod.getId()).getVersion()).isEqualTo("5.9.7");
+    }
+
+    @Test
+    void updateMod_returns404WhenNotFound() throws Exception {
+        Mod update = new Mod("JourneyMap", "6.0.0", "techbrew", "Updated", "http://new.url", "1.20.2");
+        mockMvc.perform(put("/api/mods/{id}", -1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(update)))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
     void deleteMod_returns204() throws Exception {
         mockMvc.perform(delete("/api/mods/{id}", savedMod.getId()))
             .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteMod_returns404WhenNotFound() throws Exception {
+        mockMvc.perform(delete("/api/mods/{id}", -1L))
+            .andExpect(status().isNotFound());
     }
 }
