@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -62,6 +63,33 @@ class ModpackControllerTest {
     }
 
     @Test
+    void getAllModpacks_filterByMinecraftVersion() throws Exception {
+        modpackBuilderService.createModpack(new Modpack("Old Pack", "desc", "1.19.4"));
+        mockMvc.perform(get("/api/modpacks").param("minecraftVersion", "1.19.4"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("Old Pack")));
+    }
+
+    @Test
+    void getAllModpacks_searchByPartialName() throws Exception {
+        modpackBuilderService.createModpack(new Modpack("Skyblock", "desc", "1.20.1"));
+        mockMvc.perform(get("/api/modpacks").param("search", "SKY"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("Skyblock")));
+    }
+
+    @Test
+    void getAllModpacks_minecraftVersionTakesPrecedenceOverSearch() throws Exception {
+        modpackBuilderService.createModpack(new Modpack("Old Pack", "desc", "1.19.4"));
+        mockMvc.perform(get("/api/modpacks").param("minecraftVersion", "1.20.1").param("search", "old"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is("Test Pack")));
+    }
+
+    @Test
     void getModpackById_returns200() throws Exception {
         mockMvc.perform(get("/api/modpacks/{id}", savedModpack.getId()))
             .andExpect(status().isOk())
@@ -104,9 +132,48 @@ class ModpackControllerTest {
     }
 
     @Test
+    void updateModpack_returns400WhenInvalid() throws Exception {
+        ModpackRequest invalid = new ModpackRequest("Updated Pack", "new desc", "");
+        mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest());
+        assertThat(modpackBuilderService.getModpackById(savedModpack.getId()).getName()).isEqualTo("Test Pack");
+    }
+
+    @Test
+    void updateModpack_returns404WhenNotFound() throws Exception {
+        ModpackRequest update = new ModpackRequest("Updated Pack", "new desc", "1.20.2");
+        mockMvc.perform(put("/api/modpacks/{id}", -1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(update)))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
     void deleteModpack_returns204() throws Exception {
         mockMvc.perform(delete("/api/modpacks/{id}", savedModpack.getId()))
             .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteModpack_returns404WhenNotFound() throws Exception {
+        mockMvc.perform(delete("/api/modpacks/{id}", -1L))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void addModToModpack_returns404WhenModpackNotFound() throws Exception {
+        mockMvc.perform(post("/api/modpacks/{modpackId}/mods/{modId}", -1L, savedMod.getId()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error", is("Modpack not found with id: -1")));
+    }
+
+    @Test
+    void addModToModpack_returns404WhenModNotFound() throws Exception {
+        mockMvc.perform(post("/api/modpacks/{modpackId}/mods/{modId}", savedModpack.getId(), -1L))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error", is("Mod not found with id: -1")));
     }
 
     @Test
@@ -135,11 +202,24 @@ class ModpackControllerTest {
     }
 
     @Test
+    void removeModFromModpack_returns404WhenModpackNotFound() throws Exception {
+        mockMvc.perform(delete("/api/modpacks/{modpackId}/mods/{modId}", -1L, savedMod.getId()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error", is("Modpack not found with id: -1")));
+    }
+
+    @Test
     void buildModpack_returns200WithMods() throws Exception {
         modpackBuilderService.addModToModpack(savedModpack.getId(), savedMod.getId());
         mockMvc.perform(get("/api/modpacks/{id}/build", savedModpack.getId()))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.mods", hasSize(1)));
+    }
+
+    @Test
+    void buildModpack_returns404WhenNotFound() throws Exception {
+        mockMvc.perform(get("/api/modpacks/{id}/build", -1L))
+            .andExpect(status().isNotFound());
     }
 }
 
