@@ -103,7 +103,9 @@ spring.h2.console.enabled=true
 **Type:** boolean  
 **Default:** `true`  
 **Environment variable:** `USAGE_REPORTING_ENABLED`  
-**Description:** Whether the service sends one `startup` event (program name, version and the tag `service=true`) to the trace usage-tracking service when it starts. Nothing is sent per request, and nothing about mods, modpacks, users or hosts. `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1` in the environment also turn it off and win over this setting. See [Usage reporting](README.md#usage-reporting).
+**Description:** Whether the service sends one `startup` event (program name, version, the tag `service=true` and a random installation ID as the tag `install`) to the trace usage-tracking service when it starts. Nothing is sent per request, and nothing about mods, modpacks, users or hosts. `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1` in the environment also turn it off and win over this setting. See [Usage reporting](README.md#usage-reporting).
+
+The installation ID is the value of the `TRACE_INSTALL_ID` environment variable when that is set, and otherwise a random UUID kept in `<user data dir>/mod-craft/trace-install-id` (created on first use). It is not a property, so it has no `application.properties` key. When reporting is off, no ID is generated and the file is neither read nor written.
 
 ---
 

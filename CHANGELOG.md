@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Usage reporting: one `startup` event (name, version, `service=true`) is sent to the trace service on start-up; off with `USAGE_REPORTING_ENABLED=false`, `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
+- Usage reporting: the startup event also carries a random installation ID as the tag `install`, so deployments can be counted rather than events. It comes from `TRACE_INSTALL_ID` when set, otherwise from a UUID kept in `<user data dir>/mod-craft/trace-install-id`; no ID is made, read or written while reporting is off
 
 ### Fixed
 
