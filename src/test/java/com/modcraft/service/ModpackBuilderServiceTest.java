@@ -116,4 +116,100 @@ class ModpackBuilderServiceTest {
         assertThat(modpackBuilderService.getModpacksByMinecraftVersion("1.20.1")).hasSize(1);
         assertThat(modpackBuilderService.getModpacksByMinecraftVersion("1.19.4")).hasSize(1);
     }
+
+    @Test
+    void searchModpacksByName_findsByPartialNameIgnoringCase() {
+        modpackBuilderService.createModpack(new Modpack("My Other Pack", "desc", "1.20.1"));
+        assertThat(modpackBuilderService.searchModpacksByName("my")).hasSize(2);
+        assertThat(modpackBuilderService.searchModpacksByName("OTHER")).hasSize(1);
+        assertThat(modpackBuilderService.searchModpacksByName("Skyblock")).isEmpty();
+    }
+
+    @Test
+    void createModpack_ignoresClientSuppliedId() {
+        Modpack incoming = new Modpack("Second Pack", "desc", "1.20.1");
+        incoming.setId(testModpack.getId());
+        Modpack created = modpackBuilderService.createModpack(incoming);
+        assertThat(created.getId()).isNotEqualTo(testModpack.getId());
+        assertThat(modpackBuilderService.getModpackById(testModpack.getId()).getName()).isEqualTo("My Pack");
+    }
+
+    @Test
+    void createModpack_ignoresClientSuppliedMods() {
+        Modpack incoming = new Modpack("Second Pack", "desc", "1.20.1");
+        incoming.getMods().add(testMod);
+        Modpack created = modpackBuilderService.createModpack(incoming);
+        assertThat(created.getMods()).isEmpty();
+    }
+
+    @Test
+    void updateModpack_keepsExistingMods() {
+        modpackBuilderService.addModToModpack(testModpack.getId(), testMod.getId());
+        Modpack updated = modpackBuilderService.updateModpack(testModpack.getId(),
+            new Modpack("Updated Pack", "New description", "1.20.2"));
+        assertThat(updated.getMods()).extracting(Mod::getName).containsExactly("OptiFine");
+    }
+
+    @Test
+    void updateModpack_throwsWhenNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.updateModpack(-1L, new Modpack("X", "desc", "1.20.1")))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Modpack not found with id: -1");
+    }
+
+    @Test
+    void deleteModpack_throwsWhenNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.deleteModpack(-1L))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Modpack not found with id: -1");
+    }
+
+    @Test
+    void deleteModpack_leavesItsModsInPlace() {
+        modpackBuilderService.addModToModpack(testModpack.getId(), testMod.getId());
+        modpackBuilderService.deleteModpack(testModpack.getId());
+        assertThat(modService.getModById(testMod.getId()).getName()).isEqualTo("OptiFine");
+    }
+
+    @Test
+    void addModToModpack_throwsWhenModpackNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.addModToModpack(-1L, testMod.getId()))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Modpack not found with id: -1");
+    }
+
+    @Test
+    void addModToModpack_throwsWhenModNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.addModToModpack(testModpack.getId(), -1L))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Mod not found with id: -1");
+    }
+
+    @Test
+    void removeModFromModpack_throwsModNotFoundWhenModDoesNotExist() {
+        assertThatThrownBy(() -> modpackBuilderService.removeModFromModpack(testModpack.getId(), -1L))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Mod not found with id: -1");
+    }
+
+    @Test
+    void removeModFromModpack_reportsModNotInPack() {
+        assertThatThrownBy(() -> modpackBuilderService.removeModFromModpack(testModpack.getId(), testMod.getId()))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Mod with id " + testMod.getId() + " is not in modpack with id " + testModpack.getId());
+    }
+
+    @Test
+    void removeModFromModpack_throwsWhenModpackNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.removeModFromModpack(-1L, testMod.getId()))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Modpack not found with id: -1");
+    }
+
+    @Test
+    void buildModpack_throwsWhenNotFound() {
+        assertThatThrownBy(() -> modpackBuilderService.buildModpack(-1L))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Modpack not found with id: -1");
+    }
 }

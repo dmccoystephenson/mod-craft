@@ -81,4 +81,33 @@ class ModServiceTest {
         assertThat(modService.searchModsByName("journey")).hasSize(2);
         assertThat(modService.searchModsByName("OptiFine")).isEmpty();
     }
+
+    @Test
+    void createMod_ignoresClientSuppliedId() {
+        Mod incoming = new Mod("Xaero's Minimap", "24.0.0", "xaero96", "Minimap mod", "url", "1.20.1");
+        incoming.setId(testMod.getId());
+        Mod created = modService.createMod(incoming);
+        assertThat(created.getId()).isNotEqualTo(testMod.getId());
+        assertThat(modService.getModById(testMod.getId()).getName()).isEqualTo("JourneyMap");
+    }
+
+    @Test
+    void getModsByMinecraftVersion_requiresExactMatch() {
+        assertThat(modService.getModsByMinecraftVersion("1.20")).isEmpty();
+    }
+
+    @Test
+    void updateMod_throwsWhenNotFound() {
+        Mod updates = new Mod("X", "1.0", "author", "desc", "url", "1.20.1");
+        assertThatThrownBy(() -> modService.updateMod(-1L, updates))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Mod not found with id: -1");
+    }
+
+    @Test
+    void deleteMod_throwsWhenNotFound() {
+        assertThatThrownBy(() -> modService.deleteMod(-1L))
+            .isInstanceOf(ResourceNotFoundException.class)
+            .hasMessage("Mod not found with id: -1");
+    }
 }
