@@ -21,6 +21,17 @@ All endpoints are relative to `http://localhost:8080`.
 }
 ```
 
+Errors not raised by the API itself — for example a malformed JSON body, a non-numeric ID in the path, or an unexpected server error — use Spring Boot's default error body instead:
+
+```json
+{
+  "timestamp": "2026-10-20T08:38:49.681+00:00",
+  "status": 400,
+  "error": "Bad Request",
+  "path": "/api/mods/abc"
+}
+```
+
 ---
 
 ## Mod Endpoints
@@ -99,7 +110,9 @@ GET /api/mods/3
 
 **Description:** Deletes the mod with the given ID.  
 **Path parameter:** `id` – mod ID  
-**Errors:** `404` if the mod does not exist.
+**Errors:**
+- `404` if the mod does not exist.
+- `500` (Spring Boot's default error body) if the mod is still in a modpack. Remove it from every modpack first with `DELETE /api/modpacks/{id}/mods/{modId}`. See [#14](https://github.com/dmccoystephenson/mod-craft/issues/14).
 
 ---
 
@@ -155,7 +168,7 @@ GET /api/mods/3
 
 ### DELETE /api/modpacks/{id}
 
-**Description:** Deletes the modpack with the given ID.  
+**Description:** Deletes the modpack with the given ID. The mods it contained are not deleted.  
 **Errors:** `404` if the modpack does not exist.
 
 ---
