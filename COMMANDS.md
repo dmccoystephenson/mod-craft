@@ -21,7 +21,7 @@ All endpoints are relative to `http://localhost:8080`.
 }
 ```
 
-Errors not raised by the API itself — a malformed JSON body, a non-numeric ID in the path, or an unexpected server error — use Spring Boot's default error body instead:
+Errors not raised by the API itself — for example a malformed JSON body, a non-numeric ID in the path, or an unexpected server error — use Spring Boot's default error body instead:
 
 ```json
 {
