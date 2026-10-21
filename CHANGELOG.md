@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `COMMANDS.md` now lists `author` as optional on `POST`/`PUT /api/mods` (it was never validated), documents the `400` validation error on mod and modpack create/update, and shows the JSON shape of `400`/`404`/`409` error responses.
 - `COMMANDS.md` now states that the `minecraftVersion` and `search` filters on `GET /api/mods` and `GET /api/modpacks` do not combine: when both are given, `search` is ignored.
 - `COMMANDS.md` now documents the Spring Boot default error body returned for a malformed JSON body or a non-numeric path ID, the `500` returned by `DELETE /api/mods/{id}` while the mod is still in a modpack, and that deleting a modpack leaves its mods in place.
+- The usage-reporting start-up log line, the `UsageReporter` Javadoc and the usage-reporting comment in `application.properties` now mention the random `install` ID (and `TRACE_INSTALL_ID`) that every event carries; they previously listed only the name, version and `service=true`.
 
 ## [0.0.1] – 2026-03-22
 
