@@ -21,8 +21,8 @@ import java.util.logging.Logger;
  * property is absent), the static tag {@code service=true}, which marks it as a self-hosted
  * service, and a random installation ID as the tag {@code install} (the value of
  * {@code TRACE_INSTALL_ID} when set, otherwise a UUID kept in the per-user data directory; see
- * {@link TraceInstallId}), so deployments can be counted rather than events. Nothing per request, and nothing about mods, modpacks, users, hosts or addresses is
- * ever included.
+ * {@link TraceInstallId}), so deployments can be counted rather than events. Nothing per
+ * request, and nothing about mods, modpacks, users, hosts or addresses is ever included.
  *
  * <p>The event is sent by {@link TraceClient}, which returns immediately, never throws, and
  * queues at most {@link TraceClient#QUEUE_CAPACITY} reports, so an unreachable trace server
