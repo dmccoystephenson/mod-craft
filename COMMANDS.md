@@ -127,6 +127,7 @@ GET /api/mods/3
 ### GET /api/modpacks/{id}
 
 **Description:** Returns the modpack with the given ID.  
+**Path parameter:** `id` – modpack ID  
 **Errors:** `404` if the modpack does not exist.
 
 ---
@@ -169,6 +170,7 @@ GET /api/mods/3
 ### DELETE /api/modpacks/{id}
 
 **Description:** Deletes the modpack with the given ID. The mods it contained are not deleted.  
+**Path parameter:** `id` – modpack ID  
 **Errors:** `404` if the modpack does not exist.
 
 ---

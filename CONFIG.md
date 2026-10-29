@@ -131,7 +131,7 @@ The installation ID is the value of the `TRACE_INSTALL_ID` environment variable 
 
 **Type:** string  
 **Default:** `@project.version@`, replaced with the Maven project version at build time  
-**Description:** The version sent as the `version` tag on the startup event. If this is blank or still holds the unreplaced placeholder, the `Implementation-Version` from the jar manifest is used instead; if that is missing too, the event is sent without a `version` tag.
+**Description:** The version sent as the `version` tag on the startup event. If this is blank or still holds the unreplaced placeholder, the `Implementation-Version` from the jar manifest is used instead; if that is missing too, the event is sent with `version` set to `unknown`.
 
 ---
 
