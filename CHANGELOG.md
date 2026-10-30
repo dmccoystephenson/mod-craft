@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `COMMANDS.md` now documents the Spring Boot default error body returned for a malformed JSON body or a non-numeric path ID, the `500` returned by `DELETE /api/mods/{id}` while the mod is still in a modpack, and that deleting a modpack leaves its mods in place.
 - The usage-reporting start-up log line, the `UsageReporter` Javadoc and the usage-reporting comment in `application.properties` now mention the random `install` ID (and `TRACE_INSTALL_ID`) that every event carries; they previously listed only the name, version and `service=true`.
 - `CONFIG.md` now states that when no version can be determined (no Maven-filtered property and no jar manifest version), the startup event is sent with `version` set to `unknown`; it previously claimed the `version` tag was left out. `COMMANDS.md` now lists the `id` path parameter on `GET` and `DELETE /api/modpacks/{id}`, like their mod counterparts.
+- `COMMANDS.md` now gives the success status and body of every endpoint (`201 Created` for creates, `204 No Content` for deletes, the updated modpack for adding or removing a mod). The README's "Run the application" step now uses the `dev` profile and `CONFIG.md` notes that the default profile does not start against the empty in-memory database ([#7](https://github.com/dmccoystephenson/mod-craft/issues/7)).
 
 ## [0.0.1] – 2026-03-22
 
