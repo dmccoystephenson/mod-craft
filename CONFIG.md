@@ -139,6 +139,6 @@ The installation ID is the value of the `TRACE_INSTALL_ID` environment variable 
 
 | Profile | Purpose |
 |---------|---------|
-| *(default)* | Safe defaults for production-like environments (`ddl-auto=validate`, H2 console disabled). |
+| *(default)* | Safe defaults for production-like environments (`ddl-auto=validate`, H2 console disabled). It does not start against the default in-memory database, which has no schema to validate; see [#7](https://github.com/dmccoystephenson/mod-craft/issues/7). |
 | `dev` | Local development: `ddl-auto=create-drop`, H2 console enabled. Activate with `--spring.profiles.active=dev`. |
 | *(test)* | Applied automatically during `mvn test`: `ddl-auto=create-drop` and `usage-reporting.enabled=false` via `src/test/resources/application.properties`. |

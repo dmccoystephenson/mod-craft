@@ -17,10 +17,11 @@ mod-craft is a Spring Boot REST API that lets you manage individual Minecraft mo
    ```
    mvn clean package
    ```
-4. Run the application:
+4. Run the application with the `dev` profile:
    ```
-   java -jar target/mod-craft-*.jar
+   java -jar target/mod-craft-*.jar --spring.profiles.active=dev
    ```
+   The default profile does not start yet: it validates the schema (`spring.jpa.hibernate.ddl-auto=validate`) against an empty in-memory database that nothing creates. See [#7](https://github.com/dmccoystephenson/mod-craft/issues/7). The `dev` profile creates the schema on start-up and also enables the H2 console (see [Configuration Guide](CONFIG.md#profiles)).
 5. The API is available at `http://localhost:8080`.
 
 ## Usage
