@@ -209,6 +209,49 @@ class ModpackControllerTest {
     }
 
     @Test
+    void removeModFromModpack_returns404WhenModNotFound() throws Exception {
+        mockMvc.perform(delete("/api/modpacks/{modpackId}/mods/{modId}", savedModpack.getId(), -1L))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error", is("Mod not found with id: -1")));
+    }
+
+    @Test
+    void removeModFromModpack_returns404WhenModNotInModpack() throws Exception {
+        mockMvc.perform(delete("/api/modpacks/{modpackId}/mods/{modId}",
+                savedModpack.getId(), savedMod.getId()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error", is("Mod with id " + savedMod.getId()
+                + " is not in modpack with id " + savedModpack.getId())));
+    }
+
+    @Test
+    void createModpack_ignoresClientSuppliedIdAndMods() throws Exception {
+        String body = "{\"id\": " + savedModpack.getId() + ", \"name\": \"Injected Pack\", "
+            + "\"minecraftVersion\": \"1.20.1\", \"mods\": [{\"id\": " + savedMod.getId() + "}]}";
+        mockMvc.perform(post("/api/modpacks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.name", is("Injected Pack")))
+            .andExpect(jsonPath("$.mods", hasSize(0)));
+        assertThat(modpackBuilderService.getAllModpacks()).hasSize(2);
+        assertThat(modpackBuilderService.getModpackById(savedModpack.getId()).getName()).isEqualTo("Test Pack");
+    }
+
+    @Test
+    void updateModpack_keepsExistingModsAndIgnoresClientSuppliedMods() throws Exception {
+        modpackBuilderService.addModToModpack(savedModpack.getId(), savedMod.getId());
+        String body = "{\"name\": \"Updated Pack\", \"minecraftVersion\": \"1.20.2\", \"mods\": []}";
+        mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", is("Updated Pack")))
+            .andExpect(jsonPath("$.mods", hasSize(1)))
+            .andExpect(jsonPath("$.mods[0].name", is("OptiFine")));
+    }
+
+    @Test
     void buildModpack_returns200WithMods() throws Exception {
         modpackBuilderService.addModToModpack(savedModpack.getId(), savedMod.getId());
         mockMvc.perform(get("/api/modpacks/{id}/build", savedModpack.getId()))
