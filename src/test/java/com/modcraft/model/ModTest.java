@@ -75,6 +75,19 @@ class ModTest {
     }
 
     @Test
+    void validate_everyStringFieldIsLimitedToColumnLength() {
+        String tooLong = "x".repeat(256);
+        assertThat(violations(new Mod(tooLong, tooLong, tooLong, tooLong, tooLong, tooLong)))
+            .containsOnlyKeys("name", "version", "author", "description", "fileUrl", "minecraftVersion");
+    }
+
+    @Test
+    void validate_fieldsAtColumnLength_hasNoViolations() {
+        String atLimit = "x".repeat(255);
+        assertThat(violations(new Mod(atLimit, atLimit, atLimit, atLimit, atLimit, atLimit))).isEmpty();
+    }
+
+    @Test
     void validate_idIsNotConstrained() {
         Mod mod = new Mod("OptiFine", "1.0.0", null, null, null, "1.20.1");
         mod.setId(42L);

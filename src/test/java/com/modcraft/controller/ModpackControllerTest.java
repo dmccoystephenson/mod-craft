@@ -122,6 +122,25 @@ class ModpackControllerTest {
     }
 
     @Test
+    void createModpack_returns400WhenFieldExceedsColumnLength() throws Exception {
+        ModpackRequest tooLong = new ModpackRequest("New Pack", "x".repeat(256), "1.20.1");
+        mockMvc.perform(post("/api/modpacks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tooLong)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.description", is("size must be between 0 and 255")));
+    }
+
+    @Test
+    void createModpack_returns201WhenFieldIsAtColumnLength() throws Exception {
+        ModpackRequest atLimit = new ModpackRequest("New Pack", "x".repeat(255), "1.20.1");
+        mockMvc.perform(post("/api/modpacks")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(atLimit)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
     void updateModpack_returns200() throws Exception {
         ModpackRequest update = new ModpackRequest("Updated Pack", "new desc", "1.20.2");
         mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
@@ -138,6 +157,17 @@ class ModpackControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalid)))
             .andExpect(status().isBadRequest());
+        assertThat(modpackBuilderService.getModpackById(savedModpack.getId()).getName()).isEqualTo("Test Pack");
+    }
+
+    @Test
+    void updateModpack_returns400WhenFieldExceedsColumnLength() throws Exception {
+        ModpackRequest tooLong = new ModpackRequest("x".repeat(256), "new desc", "1.20.2");
+        mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tooLong)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.name", is("size must be between 0 and 255")));
         assertThat(modpackBuilderService.getModpackById(savedModpack.getId()).getName()).isEqualTo("Test Pack");
     }
 

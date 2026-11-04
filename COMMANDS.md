@@ -84,8 +84,10 @@ GET /api/mods/3
 | `fileUrl` | string | no | Download URL for the mod JAR |
 | `minecraftVersion` | string | yes | Target Minecraft version |
 
+Every field is limited to 255 characters.
+
 **Response:** `201 Created` with the created mod, including its generated `id`.  
-**Errors:** `400` if a required field is missing or blank.
+**Errors:** `400` if a required field is missing or blank, or a field is longer than 255 characters.
 
 **Example:**
 ```json
@@ -108,7 +110,7 @@ GET /api/mods/3
 **Request body:** Same fields as `POST /api/mods`.  
 **Response:** `200 OK` with the updated mod.  
 **Errors:**
-- `400` if a required field is missing or blank.
+- `400` if a required field is missing or blank, or a field is longer than 255 characters.
 - `404` if the mod does not exist.
 
 ---
@@ -153,8 +155,10 @@ GET /api/mods/3
 | `description` | string | no | Short description |
 | `minecraftVersion` | string | yes | Target Minecraft version |
 
+Every field is limited to 255 characters.
+
 **Response:** `201 Created` with the created modpack, including its generated `id` and an empty `mods` array.  
-**Errors:** `400` if a required field is missing or blank.
+**Errors:** `400` if a required field is missing or blank, or a field is longer than 255 characters.
 
 **Example:**
 ```json
@@ -174,7 +178,7 @@ GET /api/mods/3
 **Request body:** Same fields as `POST /api/modpacks`.  
 **Response:** `200 OK` with the updated modpack. Its `mods` are left unchanged.  
 **Errors:**
-- `400` if a required field is missing or blank.
+- `400` if a required field is missing or blank, or a field is longer than 255 characters.
 - `404` if the modpack does not exist.
 
 ---

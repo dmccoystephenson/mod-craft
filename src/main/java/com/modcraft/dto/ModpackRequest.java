@@ -1,15 +1,19 @@
 package com.modcraft.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class ModpackRequest {
 
     @NotBlank
+    @Size(max = 255)
     private String name;
 
+    @Size(max = 255)
     private String description;
 
     @NotBlank
+    @Size(max = 255)
     private String minecraftVersion;
 
     public ModpackRequest() {}

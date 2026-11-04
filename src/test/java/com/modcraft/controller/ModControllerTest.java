@@ -121,6 +121,25 @@ class ModControllerTest {
     }
 
     @Test
+    void createMod_returns400WhenFieldExceedsColumnLength() throws Exception {
+        Mod tooLong = new Mod("OptiFine", "1.0.0", "sp614x", "x".repeat(256), "http://url.com", "1.20.1");
+        mockMvc.perform(post("/api/mods")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tooLong)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.description", is("size must be between 0 and 255")));
+    }
+
+    @Test
+    void createMod_returns201WhenFieldIsAtColumnLength() throws Exception {
+        Mod atLimit = new Mod("OptiFine", "1.0.0", "sp614x", "x".repeat(255), "http://url.com", "1.20.1");
+        mockMvc.perform(post("/api/mods")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(atLimit)))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
     void updateMod_returns200() throws Exception {
         Mod update = new Mod("JourneyMap", "6.0.0", "techbrew", "Updated", "http://new.url", "1.20.2");
         mockMvc.perform(put("/api/mods/{id}", savedMod.getId())
@@ -137,6 +156,17 @@ class ModControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalid)))
             .andExpect(status().isBadRequest());
+        assertThat(modService.getModById(savedMod.getId()).getVersion()).isEqualTo("5.9.7");
+    }
+
+    @Test
+    void updateMod_returns400WhenFieldExceedsColumnLength() throws Exception {
+        Mod tooLong = new Mod("x".repeat(256), "6.0.0", null, null, null, "1.20.2");
+        mockMvc.perform(put("/api/mods/{id}", savedMod.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tooLong)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.name", is("size must be between 0 and 255")));
         assertThat(modService.getModById(savedMod.getId()).getVersion()).isEqualTo("5.9.7");
     }
 
