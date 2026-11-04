@@ -8,7 +8,7 @@ Configuration is managed through `src/main/resources/application.properties` and
 
 **Type:** string  
 **Default:** `mod-craft`  
-**Description:** The name of the Spring Boot application, used in logging and actuator endpoints.
+**Description:** The name of the Spring Boot application, used in logging.
 
 ---
 

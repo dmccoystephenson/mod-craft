@@ -65,6 +65,19 @@ class ModpackRequestTest {
     }
 
     @Test
+    void validate_everyFieldIsLimitedToColumnLength() {
+        String tooLong = "x".repeat(256);
+        assertThat(violations(new ModpackRequest(tooLong, tooLong, tooLong)))
+            .containsOnlyKeys("name", "description", "minecraftVersion");
+    }
+
+    @Test
+    void validate_fieldsAtColumnLength_hasNoViolations() {
+        String atLimit = "x".repeat(255);
+        assertThat(violations(new ModpackRequest(atLimit, atLimit, atLimit))).isEmpty();
+    }
+
+    @Test
     void validate_noArgConstructor_rejectsBothRequiredFields() {
         assertThat(violations(new ModpackRequest())).containsOnlyKeys("name", "minecraftVersion");
     }
