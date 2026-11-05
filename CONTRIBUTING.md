@@ -63,6 +63,8 @@ Run the unit tests with:
 mvn clean test
 ```
 
+Most tests run inside a transaction that rolls back, so nothing they do is committed. To test behaviour that only shows up on commit, such as a foreign key violation or lazy loading after the service returns, add to `CommittedRequestsTest`, which is deliberately not `@Transactional` and removes its own rows.
+
 ## Questions
 
 Ask in the [Discord server](https://discord.gg/xXtuAQ2).
