@@ -114,7 +114,7 @@ The installation ID is the value of the `TRACE_INSTALL_ID` environment variable 
 **Type:** string  
 **Default:** `https://trace.danielstephenson.dev`  
 **Environment variable:** `USAGE_REPORTING_ENDPOINT`  
-**Description:** The trace service the startup event is sent to.
+**Description:** The trace service the startup event is sent to. A blank endpoint turns reporting off and logs a warning; start-up is unaffected. Any other value is not checked until the event is sent, so with a malformed endpoint the start-up log still says reporting is on, and the event is dropped.
 
 ---
 
