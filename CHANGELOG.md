@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `COMMANDS.md` now gives the success status and body of every endpoint (`201 Created` for creates, `204 No Content` for deletes, the updated modpack for adding or removing a mod). The README's "Run the application" step now uses the `dev` profile and `CONFIG.md` notes that the default profile does not start against the empty in-memory database ([#7](https://github.com/dmccoystephenson/mod-craft/issues/7)).
 - A mod or modpack field longer than the 255-character column limit now returns the documented `400` validation error on create and update, instead of a `500` from the database ([#27](https://github.com/dmccoystephenson/mod-craft/issues/27)).
 - `CONFIG.md` no longer says `spring.application.name` is used in actuator endpoints; the actuator is not a dependency ([#28](https://github.com/dmccoystephenson/mod-craft/issues/28)).
+- `UsageReporterTest` no longer writes the install ID file into the real user data directory ([#31](https://github.com/dmccoystephenson/mod-craft/issues/31)).
+- `CONFIG.md` now states what a blank or malformed `usage-reporting.endpoint` does ([#30](https://github.com/dmccoystephenson/mod-craft/issues/30)).
 
 ## [0.0.1] – 2026-03-22
 
