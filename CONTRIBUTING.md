@@ -63,7 +63,7 @@ Run the unit tests with:
 mvn clean test
 ```
 
-Most tests run inside a transaction that rolls back, so nothing they do is committed. To test behaviour that only shows up on commit, such as a foreign key violation or lazy loading after the service returns, add to `CommittedRequestsTest`, which is deliberately not `@Transactional` and removes its own rows.
+Most tests run inside a transaction that rolls back, so nothing they do is committed. To test behaviour that only shows up on commit, such as a foreign key violation or lazy loading after the service returns, add to `CommittedRequestsTest`, which is deliberately not `@Transactional` and removes its own rows. MockMvc does not perform the error dispatch that writes Spring Boot's default error body, so tests of that body go in `DefaultErrorBodyTest`, which sends real requests over a loopback port.
 
 ## Questions
 

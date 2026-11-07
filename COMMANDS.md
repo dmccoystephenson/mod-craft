@@ -6,7 +6,7 @@ Request and response bodies are JSON. Each endpoint below lists its success resp
 
 ## Error Responses
 
-`404` and `409` responses have a JSON body with a single `error` field:
+`404` and `409` responses raised by the API have a JSON body with a single `error` field:
 
 ```json
 {
@@ -23,7 +23,7 @@ Request and response bodies are JSON. Each endpoint below lists its success resp
 }
 ```
 
-Errors not raised by the API itself — for example a malformed JSON body, a non-numeric ID in the path, or an unexpected server error — use Spring Boot's default error body instead:
+Errors not raised by the API itself — for example a malformed JSON body, a non-numeric ID in the path, an unknown path (`404`), an unsupported method (`405`) or content type (`415`), or an unexpected server error — use Spring Boot's default error body instead:
 
 ```json
 {
