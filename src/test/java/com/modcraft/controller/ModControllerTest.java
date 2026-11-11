@@ -180,6 +180,38 @@ class ModControllerTest {
     }
 
     @Test
+    void updateMod_pathIdWinsOverBodyId() throws Exception {
+        Mod other = modService.createMod(new Mod("OptiFine", "1.0.0", "sp614x", "Performance mod", "http://url.com", "1.20.1"));
+        Mod update = new Mod("JourneyMap", "6.0.0", "techbrew", "Updated", "http://new.url", "1.20.2");
+        update.setId(other.getId());
+        mockMvc.perform(put("/api/mods/{id}", savedMod.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(update)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(savedMod.getId().intValue())))
+            .andExpect(jsonPath("$.version", is("6.0.0")));
+        Mod untouched = modService.getModById(other.getId());
+        assertThat(untouched.getName()).isEqualTo("OptiFine");
+        assertThat(untouched.getVersion()).isEqualTo("1.0.0");
+    }
+
+    @Test
+    void updateMod_clearsOptionalFieldsLeftOutOfTheBody() throws Exception {
+        String body = "{\"name\": \"JourneyMap\", \"version\": \"6.0.0\", \"minecraftVersion\": \"1.20.2\"}";
+        mockMvc.perform(put("/api/mods/{id}", savedMod.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.author").doesNotExist())
+            .andExpect(jsonPath("$.description").doesNotExist())
+            .andExpect(jsonPath("$.fileUrl").doesNotExist());
+        Mod stored = modService.getModById(savedMod.getId());
+        assertThat(stored.getAuthor()).isNull();
+        assertThat(stored.getDescription()).isNull();
+        assertThat(stored.getFileUrl()).isNull();
+    }
+
+    @Test
     void deleteMod_returns204() throws Exception {
         mockMvc.perform(delete("/api/mods/{id}", savedMod.getId()))
             .andExpect(status().isNoContent());
