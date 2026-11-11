@@ -282,6 +282,33 @@ class ModpackControllerTest {
     }
 
     @Test
+    void updateModpack_ignoresClientSuppliedIdAndUpdatesThePathModpack() throws Exception {
+        Modpack other = modpackBuilderService.createModpack(new Modpack("Other Pack", "other desc", "1.19.4"));
+        String body = "{\"id\": " + other.getId()
+            + ", \"name\": \"Updated Pack\", \"description\": \"new desc\", \"minecraftVersion\": \"1.20.2\"}";
+        mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(savedModpack.getId().intValue())))
+            .andExpect(jsonPath("$.name", is("Updated Pack")));
+        Modpack untouched = modpackBuilderService.getModpackById(other.getId());
+        assertThat(untouched.getName()).isEqualTo("Other Pack");
+        assertThat(untouched.getMinecraftVersion()).isEqualTo("1.19.4");
+    }
+
+    @Test
+    void updateModpack_clearsDescriptionLeftOutOfTheBody() throws Exception {
+        String body = "{\"name\": \"Updated Pack\", \"minecraftVersion\": \"1.20.2\"}";
+        mockMvc.perform(put("/api/modpacks/{id}", savedModpack.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.description").doesNotExist());
+        assertThat(modpackBuilderService.getModpackById(savedModpack.getId()).getDescription()).isNull();
+    }
+
+    @Test
     void buildModpack_returns200WithMods() throws Exception {
         modpackBuilderService.addModToModpack(savedModpack.getId(), savedMod.getId());
         mockMvc.perform(get("/api/modpacks/{id}/build", savedModpack.getId()))
