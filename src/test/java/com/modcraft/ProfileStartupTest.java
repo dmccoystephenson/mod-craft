@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Start-up of the application with the production configuration in
- * {@code src/main/resources}, as the README's "Run the application" step does it.
+ * {@code src/main/resources}, as step 4 of the README's "First Time Installation" does it.
  *
  * <p>The test {@code application.properties} shadows the main one on the classpath, so every
  * other test runs without it. These tests point {@code spring.config.location} at
