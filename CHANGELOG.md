@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `UsageReporterTest` no longer writes the install ID file into the real user data directory ([#31](https://github.com/dmccoystephenson/mod-craft/issues/31)).
 - `CONFIG.md` now states what a blank or malformed `usage-reporting.endpoint` does ([#30](https://github.com/dmccoystephenson/mod-craft/issues/30)).
 - `COMMANDS.md` now states that an unknown path (`404`), an unsupported method (`405`) and an unsupported content type (`415`) use Spring Boot's default error body, not the single-field `error` body.
+- `CONTRIBUTING.md` no longer requires Maven 3.9+. The build needs Maven 3.6.3 or newer, the minimum for Spring Boot 3.4. The README's installation step now gives the same Maven minimum and says Java 17 "or newer", matching `CONTRIBUTING.md` and `USER_GUIDE.md`.
 
 ## [0.0.1] – 2026-03-22
 

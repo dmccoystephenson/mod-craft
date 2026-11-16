@@ -8,7 +8,7 @@ mod-craft is a Spring Boot REST API that lets you manage individual Minecraft mo
 
 ### First Time Installation
 
-1. Ensure you have Java 17 and Maven installed.
+1. Ensure you have Java 17 or newer and Maven 3.6.3 or newer installed.
 2. Clone the repository:
    ```
    git clone https://github.com/dmccoystephenson/mod-craft.git
