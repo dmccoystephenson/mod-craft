@@ -14,7 +14,7 @@ Thank you for your interest in contributing to mod-craft! This guide will help y
 - A GitHub account
 - Git installed on your local machine
 - Java 17 or newer
-- Maven 3.9+
+- Maven 3.6.3 or newer
 - A Java IDE or text editor
 - A basic understanding of Java and Spring Boot
 
