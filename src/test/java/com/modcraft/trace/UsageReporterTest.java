@@ -96,6 +96,25 @@ class UsageReporterTest {
     }
 
     @Test
+    void enabledThatDoesNotClearlyMeanOnTurnsReportingOff() {
+        for (String off : new String[] {"false", "FALSE", "off", "no", "0", "", "  ", "disabled", "flase", null}) {
+            UsageReporter reporter = new UsageReporter(off, endpoint, "a-key", "1.0");
+            reporter.reportStartup();
+            reporter.close();
+            assertFalse(reporter.isReporting(), "'" + off + "' switches reporting off");
+            assertNull(reporter.installId(), "'" + off + "' makes up no installation ID");
+        }
+        if (environmentOptsOut()) {
+            return; // the environment has switched reporting off; that path is the client's to test
+        }
+        for (String on : new String[] {"true", " TRUE ", "on", "yes", "1"}) {
+            UsageReporter reporter = new UsageReporter(on, endpoint, "a-key", "1.0");
+            reporter.close();
+            assertTrue(reporter.isReporting(), "'" + on + "' leaves reporting on");
+        }
+    }
+
+    @Test
     void keepsTheInstallationIdFileInTheRedirectedDataDirectory() throws Exception {
         assumeFalse(environmentOptsOut(), "the environment has switched reporting off");
         assumeTrue(TraceInstallId.fromEnvironment() == null, "TRACE_INSTALL_ID pins the ID, so there is no file");
@@ -103,7 +122,7 @@ class UsageReporterTest {
         assertTrue(installIdFile().toPath().startsWith(temporaryHome),
                 "expected " + installIdFile() + " under " + temporaryHome);
 
-        UsageReporter reporter = new UsageReporter(true, endpoint, "a-key", "1.0");
+        UsageReporter reporter = new UsageReporter("true", endpoint, "a-key", "1.0");
         reporter.close();
 
         assertEquals(reporter.installId(), Files.readString(installIdFile().toPath()).trim());
@@ -112,8 +131,8 @@ class UsageReporterTest {
     @Test
     void carriesARandomInstallationIdOnlyWhileReportingIsOn() {
         assumeInstallIdStaysOutOfTheRealDataDirectory();
-        UsageReporter on = new UsageReporter(true, endpoint, "a-key", "1.0");
-        UsageReporter off = new UsageReporter(false, endpoint, "a-key", "1.0");
+        UsageReporter on = new UsageReporter("true", endpoint, "a-key", "1.0");
+        UsageReporter off = new UsageReporter("false", endpoint, "a-key", "1.0");
 
         assertNotNull(on.installId(), "an enabled client carries a random installation ID");
         assertNull(off.installId(), "a disabled client never makes up an ID");
@@ -123,7 +142,7 @@ class UsageReporterTest {
 
     @Test
     void disabledSettingSendsNothing() {
-        UsageReporter reporter = new UsageReporter(false, endpoint, "a-key", "1.0");
+        UsageReporter reporter = new UsageReporter("false", endpoint, "a-key", "1.0");
         reporter.reportStartup();
         reporter.close();
 
@@ -133,7 +152,7 @@ class UsageReporterTest {
 
     @Test
     void blankKeySendsNothing() {
-        UsageReporter reporter = new UsageReporter(true, endpoint, "", "1.0");
+        UsageReporter reporter = new UsageReporter("true", endpoint, "", "1.0");
         reporter.reportStartup();
         reporter.close();
 
@@ -143,7 +162,7 @@ class UsageReporterTest {
 
     @Test
     void blankEndpointSendsNothing() {
-        UsageReporter reporter = new UsageReporter(true, "  ", "a-key", "1.0");
+        UsageReporter reporter = new UsageReporter("true", "  ", "a-key", "1.0");
         reporter.reportStartup();
         reporter.close();
 
@@ -160,7 +179,7 @@ class UsageReporterTest {
     void malformedEndpointStaysOnAndDropsTheEvent() {
         assumeFalse(environmentOptsOut(), "the environment has switched reporting off");
         assumeInstallIdStaysOutOfTheRealDataDirectory();
-        UsageReporter reporter = new UsageReporter(true, "not a url", "a-key", "1.0");
+        UsageReporter reporter = new UsageReporter("true", "not a url", "a-key", "1.0");
         reporter.reportStartup();
         reporter.close();
 
@@ -170,7 +189,7 @@ class UsageReporterTest {
 
     @Test
     void unfilteredVersionPlaceholderIsNotSent() {
-        UsageReporter reporter = new UsageReporter(false, endpoint, "a-key", "@project.version@");
+        UsageReporter reporter = new UsageReporter("false", endpoint, "a-key", "@project.version@");
         // Outside a packaged jar there is no manifest version either.
         assertEquals("unknown", reporter.version());
         assertEquals("true", reporter.startupTags().get("service"));
@@ -183,7 +202,7 @@ class UsageReporterTest {
             return; // the environment has switched reporting off; that path is the client's to test
         }
         assumeInstallIdStaysOutOfTheRealDataDirectory();
-        UsageReporter reporter = new UsageReporter(true, endpoint, "a-key", "1.2.3");
+        UsageReporter reporter = new UsageReporter("true", endpoint, "a-key", "1.2.3");
         reporter.reportStartup();
         reporter.close();
 
