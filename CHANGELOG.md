@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Usage reporting stays off once it is turned off. `usage-reporting.enabled` is read through the trace client's `allowsReporting`, so a blank `USAGE_REPORTING_ENABLED`, a typo or any value but `true`/`on`/`yes`/`1` turns reporting off, instead of being bound as a Spring boolean. The vendored `TraceClient` is now trace-client-java 0.8.0, whose `TRACE_USAGE_REPORTING` and `DO_NOT_TRACK` checks fail closed too
-- The usage-reporting "Details" link (startup notice, docs and config comments) now points at https://danielstephenson.dev/usage-reporting, a public page, instead of a link into a private repository that answered 404. The vendored `TraceClient` is trace-client-java 0.6.1, whose server-wide switch file comment carries the same link.
+- The usage-reporting "Details" link (startup notice, docs and config comments) now points at https://danielstephenson.dev/usage-reporting, a public page, instead of a link into a private repository that answered 404. The server-wide switch file comment in the vendored `TraceClient` carries the same link.
 - `COMMANDS.md` now lists `author` as optional on `POST`/`PUT /api/mods` (it was never validated), documents the `400` validation error on mod and modpack create/update, and shows the JSON shape of `400`/`404`/`409` error responses.
 - `COMMANDS.md` now states that the `minecraftVersion` and `search` filters on `GET /api/mods` and `GET /api/modpacks` do not combine: when both are given, `search` is ignored.
 - `COMMANDS.md` now documents the Spring Boot default error body returned for a malformed JSON body or a non-numeric path ID, the `500` returned by `DELETE /api/mods/{id}` while the mod is still in a modpack, and that deleting a modpack leaves its mods in place.
@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `CONFIG.md` now states what a blank or malformed `usage-reporting.endpoint` does ([#30](https://github.com/dmccoystephenson/mod-craft/issues/30)).
 - `COMMANDS.md` now states that an unknown path (`404`), an unsupported method (`405`) and an unsupported content type (`415`) use Spring Boot's default error body, not the single-field `error` body.
 - `CONTRIBUTING.md` no longer requires Maven 3.9+. The build needs Maven 3.6.3 or newer, the minimum for Spring Boot 3.4. The README's installation step now gives the same Maven minimum and says Java 17 "or newer", matching `CONTRIBUTING.md` and `USER_GUIDE.md`.
+- The README and `CONFIG.md` now state that a `TRACE_INSTALL_ID` longer than 255 characters is ignored (and that the value is trimmed), and the README now states that `$XDG_DATA_HOME` is used only when it is an absolute path. An earlier entry in this section no longer names trace-client-java 0.6.1 as the vendored `TraceClient`; it is 0.8.0.
 
 ## [0.0.1] – 2026-03-22
 
